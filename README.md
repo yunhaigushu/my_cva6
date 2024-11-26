@@ -1,23 +1,21 @@
 # CVA6 RISC-V CPU [![Build Status](https://github.com/openhwgroup/cva6/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/openhwgroup/cva6/actions/workflows/ci.yml) [![CVA6 dashboard](https://riscv-ci.pages.thales-invia.fr/dashboard/badge.svg)](https://riscv-ci.pages.thales-invia.fr/dashboard/) [![GitHub release](https://img.shields.io/github/release/openhwgroup/cva6?include_prereleases=&sort=semver&color=blue)](https://github.com/openhwgroup/cva6/releases/)
 
-CVA6 is a 6-stage, single-issue, in-order CPU which implements the 64-bit RISC-V instruction set. It fully implements I, M, A and C extensions as specified in Volume I: User-Level ISA V 2.3 as well as the draft privilege extension 1.10. It implements three privilege levels M, S, U to fully support a Unix-like operating system. Furthermore, it is compliant to the draft external debug spec 0.13.this is the project of yunhaigushu which fork from cva6
+CVA6 是一款 6 级、单发、无序 CPU，实现了 64 位 RISC-V 指令集。它完全实现了《第一卷：用户级 ISA V 2.3》中规定的 I、M、A 和 C 扩展以及特权扩展 1.10 草案。它实现了 M、S、U 三个权限级别，完全支持类 Unix 操作系统。此外，它还符合外部调试规范 0.13 草案。
 
-It has a configurable size, separate TLBs, a hardware PTW and branch-prediction (branch target buffer and branch history table). The primary design goal was on reducing critical path length.
+它具有可配置的大小、独立的 TLB、硬件 PTW 和分支预测（分支目标缓冲区和分支历史表）。主要设计目标是减少关键路径长度。
 
 <img src="docs/03_cva6_design/_static/ariane_overview.drawio.png"/>
 
 
 # Quick setup
 
-The following instructions will allow you to compile and run a Verilator model of the CVA6 APU (which instantiates the CVA6 core) within the CVA6 APU testbench (corev_apu/tb).
+通过以下说明，您可以在 CVA6 APU 测试平台 (corev_apu/tb) 中编译并运行 CVA6 APU 的 Verilator 模型（该模型实例化了 CVA6 内核）。
 
-Throughout all build and simulations scripts executions, you can use the environment variable `NUM_JOBS` to set the number of concurrent jobs launched by `make`:
-- if left undefined, `NUM_JOBS` will default to 1, resulting in a sequential execution
-of `make` jobs;
-- when setting `NUM_JOBS` to an explicit value, it is recommended not to exceed 2/3 of
-the total number of virtual cores available on your system.    
+在所有联编和模拟脚本的执行过程中，您可以使用环境变量 `NUM_JOBS` 来设置由 `make` 启动的并发工作的数量：
+- 如果未定义， `NUM_JOBS` 将默认为 1，从而导致 `make` 工作的顺序执行；
+- 当设置 `NUM_JOBS` 为一个明确的值时，建议不要超过系统可用虚拟内核总数的 2/3。     
 
-1. Checkout the repository and initialize all submodules.
+1. 克隆版本库并初始化所有子模块。
 ```sh
 git clone https://github.com/openhwgroup/cva6.git
 cd cva6
