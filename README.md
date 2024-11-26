@@ -8,73 +8,75 @@ CVA6 是一款 6 级、单发、无序 CPU，实现了 64 位 RISC-V 指令集�
 
 
 # Quick setup
+(在Ubuntu 22.04下实验)
 
 通过以下说明，您可以在 CVA6 APU 测试平台 (corev_apu/tb) 中编译并运行 CVA6 APU 的 Verilator 模型（该模型实例化了 CVA6 内核）。
 
 在所有联编和模拟脚本的执行过程中，您可以使用环境变量 `NUM_JOBS` 来设置由 `make` 启动的并发工作的数量：
 - 如果未定义， `NUM_JOBS` 将默认为 1，从而导致 `make` 工作的顺序执行；
 - 当设置 `NUM_JOBS` 为一个明确的值时，建议不要超过系统可用虚拟内核总数的 2/3。     
+说白了设置一个环境变量 `NUM_JOBS`，可以确保你更快地执行项目里的脚本，当然，也更吃你的虚拟机内存。
+比如我有6个虚拟内核，就可以这样
+
+```sh
+vim ~/.bashrc
+export NUM_JOBS=4
+source ~/.bashrc
+```
 
 1. 克隆版本库并初始化所有子模块。
+
 ```sh
 git clone https://github.com/openhwgroup/cva6.git
 cd cva6
 git submodule update --init --recursive
 ```
 
-2. Install the GCC Toolchain [build prerequisites](util/toolchain-builder/README.md#Prerequisites) then [the toolchain itself](util/toolchain-builder/README.md#Getting-started).
+2. 安装 GCC 工具链 [构建前提条件](util/toolchain-builder/README.md#Prerequisites) 然后安装 [工具链本身](util/toolchain-builder/README.md#Getting-started).
+警告： **强烈建议**使用由提供的脚本构建的工具链。（你最好听话，否则跑不出来有你哭的）
 
-:warning: It is **strongly recommended** to use the toolchain built with the provided scripts.
-
-3. Install `cmake`, version 3.14 or higher.
-
-4. Set the RISCV environment variable.
-```sh
-export RISCV=/path/to/toolchain/installation/directory
-```
-
-5. Install `help2man` and `device-tree-compiler` packages.
-
-For Debian-based Linux distributions, run :
+3. 安装 3.14 或更高版本的 `cmake`，以及`help2man`和`device-tree-compiler`。
+对于基于 Debian 的 Linux 发行版（比如ubuntu）
 
 ```sh
-sudo apt-get install help2man device-tree-compiler
+sudo apt-get install help2man device-tree-compiler cmake
 ```
 
-6. Install the riscv-dv requirements:
+4. 安装 riscv-dv 所需配置:
 
 ```sh
 pip3 install -r verif/sim/dv/requirements.txt
 ```
 
-7. Run these commands to install a custom Spike and Verilator (i.e. these versions must be used to simulate the CVA6) and [these](#running-regression-tests-simulations) tests suites.
+7. 运行这些命令可安装自定义 Spike 和 Verilator（即必须使用这些版本来模拟 CVA6）和 [这些](#running-regression-tests-simulations)测试套件。
+
 ```sh
-# DV_SIMULATORS is detailed in the next section
+# DV_SIMULATORS 将在下一节详细介绍
 export DV_SIMULATORS=veri-testharness,spike
 bash verif/regress/smoke-tests.sh
 ```
 
-# Running standalone simulations
+# 运行独立模拟
 
-Simulating the CVA6 is done by using `verif/sim/cva6.py`.
+使用文件 `verif/sim/cva6.py`进行仿真。
 
-The environment variable `DV_SIMULATORS` allows you to specify which simulator to use.
+配置环境变量`DV_SIMULATORS`选择你想要使用的仿真器。
 
-Four simulation types are supported:
+支持四种仿真器:
 - **veri-testharness**: verilator with corev_apu/testharness testbench
 - **vcs-testharness**: vcs with corev_apu/testharness testbench
 - **vcs-uvm**: vcs with UVM testbench
 - **Spike** ISS 
 
-You can set several simulators, such as :
+你可以设置多个仿真器, 比如:
 
 ```sh
 export DV_SIMULATORS=veri-testharness,vcs-testharness,vcs_uvm
 ```
 
-If exactly 2 simulators are given, their trace is compared ([see the Regression tests section](#running-regression-tests-simulations)).
+如果刚好选了两个仿真器, 则会比较它们的轨迹 ([详见这里](#running-regression-tests-simulations)).
 
-Here is how you can run the hello world C program with the Verilator model: 
+这里告诉你怎么使用verilator跑hello.c程序: 
 
 ```sh
 # Make sure to source this script from the root directory 
